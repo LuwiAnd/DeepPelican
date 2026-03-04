@@ -1,0 +1,8 @@
+# Projektplanering - Ludwig Andersson Examensarbete för .Net-utvecklare på IT-högskolan
+
+Jag har tänkt göra ett schackprogram som man kan spela mot. Användargränssnittet kommer att göras i Angular, som vi använt på LiA-platsen, så det kommer att bli en webbsida. Man ska kunna göra schackdrag med musen, som skickas till en backend gjord i C# med hjälp av REST-API:er. Backend-programmen kommer att räkna ut det bästa möjliga draget med hjälp av rekursiva metoder och metoder för att utvärdera positioner på schackbrädet. 
+
+Jonathan Olaussen från klassen är intresserad av att vara med på projektet. Han kommer att ansvara för att skapa funktionalitet för att kunna spela mot andra personer över nätet med hjälp av SignalR. Han kommer även att få ansvara för att man ska kunna cache:a partier, så att om man råkar stänga webbläsaren, så ska man kunna öppna en ny webbläsare och snabbt hoppa tillbaka till det parti man höll på att spela.
+
+## Begränsningar
+Jag tror inte att programmet kommer att bli bra på slutspel, alltså att spela positioner med få pjäser kvar, eftersom det kräver att man får till väldigt avancerad logik snarare än att förlita sig på att datorn är bättre än människor på att hålla många ställningar i minnet. Jag tror även att det kan vara komplicerat att få programmet att skippa drag som verkar klart sämre än övriga ("pruning"). I början kommer programmet troligtvis inte att använda en schackklocka, men det kommer vi att lägga till i mån av tid.
