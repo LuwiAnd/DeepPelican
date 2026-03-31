@@ -1,2 +1,2 @@
 # DeepPelican
-This is my final thesis for my degree in systems development with .Net at ITHS
+This is our final thesis for our degree in systems development with .Net at ITHS.
