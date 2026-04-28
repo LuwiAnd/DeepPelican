@@ -6,3 +6,5 @@ Jonathan Olaussen från klassen är intresserad av att vara med på projektet. H
 
 ## Begränsningar
 Jag tror inte att programmet kommer att bli bra på slutspel, alltså att spela positioner med få pjäser kvar, eftersom det kräver att man får till väldigt avancerad logik snarare än att förlita sig på att datorn är bättre än människor på att hålla många ställningar i minnet. Jag tror även att det kan vara komplicerat att få programmet att skippa drag som verkar klart sämre än övriga ("pruning"). I början kommer programmet troligtvis inte att använda en schackklocka, men det kommer vi att lägga till i mån av tid.
+
+## Teständring
