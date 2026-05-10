@@ -1,0 +1,24 @@
+<div class="chess-board">
+  <!-- @for (row of chessBoardView; track $index; let y = $index) { -->
+   @for (row of chessBoardView.slice().reverse(); track $index; let y = $index) {
+    <div class="row">
+      @for (piece of row; track $index; let x = $index) {
+        <!-- <div class="square" [class.dark]="isDarkSquare(x, y)" [class.light]="!isDarkSquare(x, y)"> -->
+        <div 
+          class="square" 
+          [ngClass]="{ 
+            'dark-square': isDarkSquare(x, chessBoardView.length - y - 1), 
+            'light-square': !isDarkSquare(x, chessBoardView.length - y - 1) 
+          }">
+
+          <!-- {{ (chessBoardView.length - y - 1) + ", " + x + ": " + cell }} -->
+          <!-- <img *ngIf="piece" class="piece" [src]="pieceImagePaths[piece]" alt="{{ piece }}" /> -->
+           @if (piece) {
+            <img class="piece" [src]="pieceImagePaths[piece]" [alt]="piece" />
+          }
+
+        </div>
+      }
+    </div>
+  }
+</div>
