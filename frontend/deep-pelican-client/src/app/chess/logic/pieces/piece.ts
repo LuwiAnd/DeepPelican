@@ -20,4 +20,6 @@ export abstract class Piece {
     public get color(): Color {
         return this._color;
     }
+
+    // public abstract getValidMoves(chessBoard: (Piece | null)[][], from: Coords): Coords[];
 }

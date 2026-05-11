@@ -15,6 +15,9 @@ export class Pawn extends Piece {
     constructor(color: Color) {
         super(color);
         this._FENChar = color === Color.White ? FENChar.WhitePawn : FENChar.BlackPawn;
+        if(color === Color.Black) {
+            this.setBlackPawnDirections();
+        }
     }
 
     public get isDoubleJumped(): boolean {
@@ -38,12 +41,12 @@ export class Pawn extends Piece {
         this._unMoved = value;
 
         if(!value) {
-            this._directions = [
-                {x: 0, y: 1},
-                {x: -1, y: 1},
-                {x: 1, y: 1}
-            ];
-            this.setBlackPawnDirections();
+            this._directions = this._directions.filter(dir => !(dir.x === 0 && Math.abs(dir.y) === 2));
+        }else{
+            const doubleJumpDirection: Coords = {x: 0, y: this._color === Color.White ? 2 : -2};
+            if(!this._directions.some(dir => dir.x === doubleJumpDirection.x && dir.y === doubleJumpDirection.y)) {
+                this._directions.push(doubleJumpDirection);
+            }
         }
     }
 

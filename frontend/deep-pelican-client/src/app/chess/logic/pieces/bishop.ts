@@ -14,4 +14,13 @@ export class Bishop extends Piece {
         super(color);
         this._FENChar = color === Color.White ? FENChar.WhiteBishop : FENChar.BlackBishop;
     }
+
+    // public getValidMoves(chessBoard: (Piece | null)[][], from: Coords): Coords[] {
+    //     for (const direction of this.directions) {
+    //         let newX = from.x + direction.x;
+    //         let newY = from.y + direction.y;
+
+    //         if(!isOnBoard)
+    //     return [];
+    // }
 }

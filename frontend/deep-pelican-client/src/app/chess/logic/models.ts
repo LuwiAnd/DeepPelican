@@ -1,3 +1,5 @@
+
+
 export enum Color{
     White,
     Black
@@ -37,3 +39,19 @@ export const pieceImagePaths: Readonly<Record<FENChar, string>> = {
     [FENChar.BlackQueen]: '/pieces/black_queen.svg',
     [FENChar.BlackKing]: '/pieces/black_king.svg'
 };
+
+export type ValidMoves = Map<string, Coords[]>;
+
+type SquareWithPiece = {
+    piece: FENChar;
+    x: number;
+    y: number;
+}
+
+type EmptySquare = {
+    piece: null;
+    x: number;
+    y: number;
+}
+
+export type SelectedSquare = SquareWithPiece | EmptySquare;

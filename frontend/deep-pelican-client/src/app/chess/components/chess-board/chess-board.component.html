@@ -8,9 +8,16 @@
           class="square" 
           [ngClass]="{ 
             'dark-square': isDarkSquare(x, chessBoardView.length - y - 1), 
-            'light-square': !isDarkSquare(x, chessBoardView.length - y - 1) 
-          }">
+            'light-square': !isDarkSquare(x, chessBoardView.length - y - 1), 
 
+            'selected-square': isSelectedSquare(x, chessBoardView.length - y - 1)
+          }"
+          (click)="selectSquare(x, chessBoardView.length - y - 1)"
+          >
+
+            <div [ngClass]="{
+              'valid-move-indicator': isValidMove(x, chessBoardView.length - y - 1)
+            }"></div>
           <!-- {{ (chessBoardView.length - y - 1) + ", " + x + ": " + cell }} -->
           <!-- <img *ngIf="piece" class="piece" [src]="pieceImagePaths[piece]" alt="{{ piece }}" /> -->
            @if (piece) {
