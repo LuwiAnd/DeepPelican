@@ -387,9 +387,60 @@ export class ChessBoard {
                 continue;
             }
             
-            if( piece instanceof Knight || piece instanceof King) {
+            if( piece instanceof Knight) {
                 if (this.isPositionValidAfterMove(piece, from, { x: newX, y: newY }, piece.color)) {
                     validMoves.push({ x: newX, y: newY });
+                }
+            }else if (piece instanceof King) {
+                if (this.isPositionValidAfterMove(piece, from, { x: newX, y: newY }, piece.color)) {
+                    validMoves.push({ x: newX, y: newY });
+                }
+                const opponentColor = piece.color === Color.White ? Color.Black : Color.White;
+                // Short castling
+                if(
+                    piece.unMoved
+
+                    && !this.isThreatened(
+                        from, 
+                        opponentColor)
+                    && !this.isThreatened(
+                        { x: from.x + 1, y: from.y }, 
+                        opponentColor)
+                    && !this.isThreatened(
+                        { x: from.x + 2, y: from.y }, 
+                        opponentColor)
+
+                    && this._chessBoard[from.y][from.x + 1] === null
+                    && this._chessBoard[from.y][from.x + 2] === null
+
+                    && this._chessBoard[from.y][from.x + 3] instanceof Rook
+                    && this._chessBoard[from.y][from.x + 3]?.color === piece.color
+                    && (this._chessBoard[from.y][from.x + 3] as Rook).unMoved
+                ) 
+                {
+                    validMoves.push({ x: from.x + 2, y: from.y });
+                }
+                // Long castling
+                if(
+                    piece.unMoved
+
+                    && !this.isThreatened(
+                        from, 
+                        opponentColor)
+                    && !this.isThreatened(
+                        { x: from.x - 1, y: from.y }, 
+                        opponentColor)
+                    && !this.isThreatened(
+                        { x: from.x - 2, y: from.y }, 
+                        opponentColor)
+                    
+                    && this._chessBoard[from.y][from.x - 1] === null
+                    && this._chessBoard[from.y][from.x - 2] === null
+                    && this._chessBoard[from.y][from.x - 4] instanceof Rook
+                    && this._chessBoard[from.y][from.x - 4]?.color === piece.color
+                    && (this._chessBoard[from.y][from.x - 4] as Rook).unMoved
+                ) {
+                    validMoves.push({ x: from.x - 2, y: from.y });
                 }
             } else if (piece instanceof Pawn) {
                 if(to.x !== 0) {
@@ -477,6 +528,238 @@ export class ChessBoard {
         if (!piece) {
             throw new Error('No piece at the source coordinates');
         }
+
+        if (piece.color !== this._turnColor) {
+            throw new Error('It is not this piece color\'s turn');
+        }
+
+
+        if (!this.isInsideBoard(to)) {
+            throw new Error('Target coordinates are outside the board');
+        }
+
+        if (!this.isPositionValidAfterMove(piece, from, to, piece.color)) {
+            throw new Error('Invalid move');
+        }
+
+        if (piece instanceof Pawn) {
+            if(piece.directions.some(dir => dir.x === to.x - from.x && dir.y === to.y - from.y)) {
+                if(
+                    Math.abs(to.y - from.y) === 2 
+                    && piece.unMoved 
+                    && this._chessBoard[to.y][to.x] === null 
+                    && this._chessBoard[from.y + (to.y - from.y) / 2][from.x] === null
+                ) 
+                {
+                    piece.isDoubleJumped = true;
+                    piece.unMoved = false;
+                    this._chessBoard[to.y][to.x] = piece;
+                    this._chessBoard[from.y][from.x] = null;
+                    
+                    this.updateAfterMove(piece, from, to);
+                    return;
+                }else if(
+                    Math.abs(to.y - from.y) === 1 
+                    && to.x === from.x
+                    && this._chessBoard[to.y][to.x] === null
+                ) 
+                {
+                    piece.isDoubleJumped = false;
+                    piece.unMoved = false;
+                    this._chessBoard[to.y][to.x] = piece;
+                    this._chessBoard[from.y][from.x] = null;
+
+                    this.updateAfterMove(piece, from, to);
+                    return;
+                }else if(
+                    Math.abs(to.y - from.y) === 1 
+                    && Math.abs(to.x - from.x) === 1
+                    && this._chessBoard[to.y][to.x] !== null
+                    && this._chessBoard[to.y][to.x]?.color !== piece.color
+                ) {
+                    piece.isDoubleJumped = false;
+                    piece.unMoved = false;
+                    this._chessBoard[to.y][to.x] = piece;
+                    this._chessBoard[from.y][from.x] = null;
+
+                    this.updateAfterMove(piece, from, to);
+                    return;
+                }else if( // En passant
+                    Math.abs(to.y - from.y) === 1 
+                    && Math.abs(to.x - from.x) === 1
+                    && this._chessBoard[to.y][to.x] === null
+                    && this._chessBoard[from.y][to.x] instanceof Pawn
+                    && this._chessBoard[from.y][to.x]?.color !== piece.color
+                    && (this._chessBoard[from.y][to.x] as Pawn).isDoubleJumped
+                ) {
+                    piece.isDoubleJumped = false;
+                    piece.unMoved = false;
+                    this._chessBoard[to.y][to.x] = piece;
+                    this._chessBoard[from.y][from.x] = null;
+                    this._chessBoard[from.y][to.x] = null; // Remove the captured pawn
+                    
+                    this.updateAfterMove(piece, from, to);
+                    return;
+                }else{
+                    piece.isDoubleJumped = false;
+                }
+            } else{
+                throw new Error('Invalid move for pawn');
+            }
+        }
+
+        if(piece instanceof King ) {
+            const opponentColor = piece.color === Color.White ? Color.Black : Color.White;
+            // Short castling
+            if(
+                Math.abs(to.y - from.y) === 0 
+                && to.x - from.x === 2
+                && this._chessBoard[from.y][from.x + 1] === null
+                && this._chessBoard[from.y][from.x + 2] === null
+                && this._chessBoard[from.y][from.x + 3] instanceof Rook
+                && this._chessBoard[from.y][from.x + 3]?.color === piece.color
+                && piece.unMoved
+                && (this._chessBoard[from.y][from.x + 3] as Rook).unMoved
+
+                && !this.isThreatened(from, opponentColor)
+                && !this.isThreatened({ x: from.x + 1, y: from.y }, opponentColor)
+                && !this.isThreatened({ x: from.x + 2, y: from.y }, opponentColor)
+            ) {
+                this._chessBoard[from.y][from.x] = null;
+                const rook = this._chessBoard[from.y][from.x + 3] as Rook;
+                this._chessBoard[from.y][from.x + 1] = rook;
+                this._chessBoard[to.y][to.x] = piece;
+                this._chessBoard[from.y][from.x + 3] = null;
+                rook.unMoved = false;
+                piece.unMoved = false;
+
+                this.updateAfterMove(piece, from, to);
+                return;
+            // Long castling
+            } else if(
+                Math.abs(to.y - from.y) === 0 
+                && to.x - from.x === -2
+                && this._chessBoard[from.y][from.x - 1] === null
+                && this._chessBoard[from.y][from.x - 2] === null
+                && this._chessBoard[from.y][from.x - 3] === null
+                && this._chessBoard[from.y][from.x - 4] instanceof Rook
+                && this._chessBoard[from.y][from.x - 4]?.color === piece.color
+                && piece.unMoved
+                && (this._chessBoard[from.y][from.x - 4] as Rook).unMoved
+
+                && !this.isThreatened(from, opponentColor)
+                && !this.isThreatened({ x: from.x - 1, y: from.y }, opponentColor)
+                && !this.isThreatened({ x: from.x - 2, y: from.y }, opponentColor)
+            ) {
+                this._chessBoard[from.y][from.x] = null;
+                const rook = this._chessBoard[from.y][from.x - 4] as Rook;
+                this._chessBoard[from.y][from.x - 1] = rook;
+                this._chessBoard[to.y][to.x] = piece;
+                this._chessBoard[from.y][from.x - 4] = null;
+                rook.unMoved = false;
+                piece.unMoved = false;
+                
+                this.updateAfterMove(piece, from, to);
+                return;
+            } else if(
+                Math.abs(to.x - from.x) <= 1 
+                && Math.abs(to.y - from.y) <= 1
+                && (to.x !== from.x || to.y !== from.y)
+                && this.isPositionValidAfterMove(piece, from, to, piece.color)
+            ) {
+                this._chessBoard[from.y][from.x] = null;
+                this._chessBoard[to.y][to.x] = piece;
+                piece.unMoved = false;
+                
+                this.updateAfterMove(piece, from, to);
+                return;
+            } else {
+                throw new Error('Invalid move for king');
+            }
+        }
+
+
+        if (piece instanceof Knight) {
+            const validKnightMoves = 
+                piece.directions.map(dir => ({ x: from.x + dir.x, y: from.y + dir.y }))
+                .filter(coords => this.isInsideBoard(coords));
+
+            const isKnightMove = validKnightMoves.some(
+                coords => coords.x === to.x && coords.y === to.y
+            );
+
+            if (
+                isKnightMove &&
+                this.isPositionValidAfterMove(piece, from, to, piece.color)
+            ) {
+                this._chessBoard[from.y][from.x] = null;
+                this._chessBoard[to.y][to.x] = piece;
+                
+                this.updateAfterMove(piece, from, to);
+                return;
+            } else {
+                throw new Error('Invalid move for knight');
+            }
+        }
+
+        if (piece instanceof Bishop || piece instanceof Rook || piece instanceof Queen) {
+            const isValidMove = piece.directions.some(dir => {
+                let newX = from.x + dir.x;
+                let newY = from.y + dir.y;
+
+                while (this.isInsideBoard({ x: newX, y: newY })) {
+                    if (newX === to.x && newY === to.y) {
+                        return true;
+                    }
+
+                    if (this._chessBoard[newY][newX] !== null) {
+                        return false;
+                    }
+
+                    newX += dir.x;
+                    newY += dir.y;
+                }
+
+                return false;
+            });
+
+            if (
+                isValidMove &&
+                this.isPositionValidAfterMove(piece, from, to, piece.color)
+            ) {
+                this._chessBoard[from.y][from.x] = null;
+                this._chessBoard[to.y][to.x] = piece;
+                // this._turnColor = this._turnColor === Color.White ? Color.Black : Color.White;
+                // this._validMoves = this.findValidMoves(this._turnColor);
+                this.updateAfterMove(piece, from, to);
+                return;
+            } else {
+                throw new Error('Invalid move for bishop, rook, or queen');
+            }
+        }
+    }
+
+    private updateAfterMove(piece: Piece, from: Coords, to: Coords): void {
+        for (let y = 0; y < 8; y++) {
+            for (let x = 0; x < 8; x++) {
+                const currentPiece = this._chessBoard[y][x];
+                if(
+                    currentPiece === piece
+                    && from.x === to.x
+                    && Math.abs(from.y - to.y) === 2
+                ) {
+                    continue;
+                }
+                if(currentPiece instanceof Pawn) 
+                {
+                    const pawn = this._chessBoard[y][x] as Pawn;
+                    pawn.isDoubleJumped = false;
+                }
+            }
+        }
+
+        this._turnColor = this._turnColor === Color.White ? Color.Black : Color.White;
+        this._validMoves = this.findValidMoves(this._turnColor);
     }
 
 }
