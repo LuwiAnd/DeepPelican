@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Piece } from '../../logic/pieces/piece';
 import { ChessBoard } from '../../logic/chess-board';
-import { Color, Coords, FENChar, pieceImagePaths } from '../../logic/models';
+import { CheckedKing, Color, Coords, FENChar, pieceImagePaths } from '../../logic/models';
 import { CommonModule } from '@angular/common';
 import { SelectedSquare } from '../../logic/models';
 
@@ -15,6 +15,7 @@ export class ChessBoardComponent {
   public pieceImagePaths = pieceImagePaths;
   private _chessBoard: ChessBoard = new ChessBoard();
   public chessBoardView: (FENChar | null)[][] = this._chessBoard.chessBoardView;
+  private checkState: CheckedKing | null = this._chessBoard.kingChecked;
 
   public get turnColor(): Color {
     return this._chessBoard.turnColor;
@@ -41,12 +42,22 @@ export class ChessBoardComponent {
 
   public selectSquare(x: number, y: number): boolean {
     const piece = this._chessBoard.getPieceAt({x, y});
-
-    if(piece && piece.color === this._chessBoard.turnColor) {
-      this.selectedSquare = {piece: piece.FENChar, x, y};
-      const key = `${x},${y}`;
-      this.pieceValidMoves = this._chessBoard.validMoves.get(key) || [];
-      return true;
+    if(
+      !piece && 
+      !this.pieceValidMoves.some(
+        move => move.x === x && move.y === y
+      )
+      || (
+        piece 
+        && piece.color !== this._chessBoard.turnColor
+        && !this.pieceValidMoves.some(
+          move => move.x === x && move.y === y
+        )
+      )
+    ) {
+      this.selectedSquare = {piece: null, x: -1, y: -1};
+      this.pieceValidMoves = [];
+      return false;
     }
 
     if(this.selectedSquare && this.selectedSquare.piece) {
@@ -66,6 +77,16 @@ export class ChessBoardComponent {
         return true;
       }
     }
+
+    
+    if(piece && piece.color === this._chessBoard.turnColor) {
+      this.selectedSquare = {piece: piece.FENChar, x, y};
+      const key = `${x},${y}`;
+      this.pieceValidMoves = this._chessBoard.validMoves.get(key) || [];
+      return true;
+    }
+
+    
     return false;
   }
 
@@ -76,5 +97,26 @@ export class ChessBoardComponent {
 
   public isValidMove(x: number, y: number): boolean {
     return this._chessBoard.validMoves.get(`${this.selectedSquare?.x},${this.selectedSquare?.y}`)?.some(move => move.x === x && move.y === y) || false;
+  }
+
+  public isCheckedSquare(x: number, y: number): boolean {
+    return (
+      this._chessBoard.kingChecked !== null
+      && this._chessBoard.kingChecked?.x === x
+      && this._chessBoard.kingChecked?.y === y
+      && this._chessBoard.kingChecked?.checked
+    );
+  }
+
+  public isLastMove(x: number, y: number): boolean {
+    return (
+      this._chessBoard.lastMoveFrom !== null
+      && this._chessBoard.lastMoveFrom.x === x
+      && this._chessBoard.lastMoveFrom.y === y
+    ) || (
+      this._chessBoard.lastMoveTo !== null
+      && this._chessBoard.lastMoveTo.x === x
+      && this._chessBoard.lastMoveTo.y === y
+    );
   }
 }

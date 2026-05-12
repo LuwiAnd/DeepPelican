@@ -54,4 +54,12 @@ type EmptySquare = {
     y: number;
 }
 
+
+
 export type SelectedSquare = SquareWithPiece | EmptySquare;
+
+export type CheckedKing = {
+    checked: boolean;
+    x: number;
+    y: number;
+}

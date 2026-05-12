@@ -1,4 +1,4 @@
-import {FENChar, Coords, Color, ValidMoves} from './models';
+import {FENChar, Coords, Color, ValidMoves, CheckedKing} from './models';
 import { Bishop } from './pieces/bishop';
 import { King } from './pieces/king';
 import { Knight } from './pieces/knight';
@@ -11,6 +11,9 @@ export class ChessBoard {
     private _chessBoard: (Piece | null)[][];
     private _turnColor: Color = Color.White;
     private _validMoves: ValidMoves = new Map<string, Coords[]>();
+    private _kingChecked: CheckedKing | null = null;
+    private _lastMoveFrom: Coords | null = null;
+    private _lastMoveTo: Coords | null = null;
 
     constructor() {
         this._chessBoard = this.initializeChessBoard();
@@ -73,6 +76,18 @@ export class ChessBoard {
         return this._chessBoard.map(row => {
             return row.map(piece => piece instanceof Piece ? piece.FENChar : null);
         });
+    }
+
+    public get kingChecked(): CheckedKing | null {
+        return this._kingChecked;
+    }
+
+    public get lastMoveFrom(): Coords | null {
+        return this._lastMoveFrom;
+    }
+
+    public get lastMoveTo(): Coords | null {
+        return this._lastMoveTo;
     }
 
     public static isDarkSquare(x: number, y: number): boolean {
@@ -760,6 +775,28 @@ export class ChessBoard {
 
         this._turnColor = this._turnColor === Color.White ? Color.Black : Color.White;
         this._validMoves = this.findValidMoves(this._turnColor);
+        this.updateKingChecked(this._turnColor);
+        this._lastMoveFrom = from;
+        this._lastMoveTo = to;
     }
 
+    // private promotePawn(coords: Coords, newPieceType: Function): void {
+    //     const piece = this.getPieceAt(coords);
+    //     if (piece instanceof Pawn && coords.y === 0 || coords.y === 7) {
+    //         this._chessBoard[coords.y][coords.x] = new newPieceType(piece.color);
+    //     }
+    // }
+
+    private updateKingChecked(color: Color): void {
+        const kingPosition = this.findKing(color);
+        const opponentColor = color === Color.White ? Color.Black : Color.White;
+        if (!kingPosition) {
+            throw new Error('King not found on the board');
+        }
+        this._kingChecked = 
+        { checked: this.isThreatened(kingPosition, opponentColor), 
+            x: kingPosition.x, 
+            y: kingPosition.y 
+        };
+    }
 }

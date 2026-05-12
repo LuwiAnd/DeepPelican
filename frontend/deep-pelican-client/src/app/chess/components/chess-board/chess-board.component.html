@@ -10,7 +10,9 @@
             'dark-square': isDarkSquare(x, chessBoardView.length - y - 1), 
             'light-square': !isDarkSquare(x, chessBoardView.length - y - 1), 
 
-            'selected-square': isSelectedSquare(x, chessBoardView.length - y - 1)
+            'selected-square': isSelectedSquare(x, chessBoardView.length - y - 1),
+            'last-move-square': isLastMove(x, chessBoardView.length - y - 1),
+            'checked-square': isCheckedSquare(x, chessBoardView.length - y - 1),
           }"
           (click)="selectSquare(x, chessBoardView.length - y - 1)"
           >
