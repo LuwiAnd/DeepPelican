@@ -63,3 +63,8 @@ export type CheckedKing = {
     x: number;
     y: number;
 }
+
+export type ChessMove = {
+    from: Coords;
+    to: Coords;
+}
