@@ -370,7 +370,7 @@ export class ChessBoard {
     }
 
 
-    private findValidMoves(color: Color): ValidMoves {
+    public findValidMoves(color: Color): ValidMoves {
         const validMoves: ValidMoves = new Map<string, Coords[]>();
 
         for (let y = 0; y < 8; y++) {
@@ -780,12 +780,15 @@ export class ChessBoard {
         this._lastMoveTo = to;
     }
 
-    // private promotePawn(coords: Coords, newPieceType: Function): void {
-    //     const piece = this.getPieceAt(coords);
-    //     if (piece instanceof Pawn && coords.y === 0 || coords.y === 7) {
-    //         this._chessBoard[coords.y][coords.x] = new newPieceType(piece.color);
-    //     }
-    // }
+    public promotePawn(coords: Coords, newPiece: Piece): void {
+        const piece = this.getPieceAt(coords);
+        if (piece instanceof Pawn && (coords.y === 0 || coords.y === 7)) {
+            this._chessBoard[coords.y][coords.x] = newPiece;
+        }
+
+        this._validMoves = this.findValidMoves(this._turnColor);
+        this.updateKingChecked(this._turnColor);
+    }
 
     private updateKingChecked(color: Color): void {
         const kingPosition = this.findKing(color);

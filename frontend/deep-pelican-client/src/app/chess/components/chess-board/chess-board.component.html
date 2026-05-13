@@ -31,3 +31,10 @@
     </div>
   }
 </div>
+
+@if (showPromotionDialog) {
+  <app-pawn-promotion 
+    [color]="promotionColor!" 
+    (pieceSelected)="onPieceSelected($event)">
+  </app-pawn-promotion>
+}

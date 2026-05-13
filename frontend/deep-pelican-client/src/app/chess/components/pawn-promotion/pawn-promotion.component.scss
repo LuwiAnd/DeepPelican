@@ -1,0 +1,47 @@
+.pawn-promotion-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.pawn-promotion-dialog {
+  background: #9e5cab;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  font-size: larger;
+}
+
+.piece-options {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.piece-button {
+//   background: none;
+  background: #f1f18c;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.piece-button:hover {
+  background: #9bcbff;
+  border-color: #007bff;
+}
+
+.piece-button img {
+  width: 50px;
+  height: 50px;
+}
