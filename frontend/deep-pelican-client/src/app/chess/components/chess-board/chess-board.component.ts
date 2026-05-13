@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { SelectedSquare } from '../../logic/models';
 import { PawnPromotionComponent } from '../pawn-promotion/pawn-promotion.component';
 import { Pawn } from '../../logic/pieces/pawn';
+import { DialogService } from '../../../shared/services/dialog.service';
 
 @Component({
   selector: 'app-chess-board',
@@ -22,6 +23,29 @@ export class ChessBoardComponent {
   public showPromotionDialog = false;
   public promotionCoords: Coords | null = null;
   public promotionColor: Color | null = null;
+
+  constructor(private dialogService: DialogService) {}
+
+  private checkGameState(): void {
+    console.log('Checking game state:', {
+      kingChecked: this._chessBoard.kingChecked,
+      validMoves: this._chessBoard.findValidMoves(this._chessBoard.turnColor).size
+    });
+    
+    if(this.isCheckMate()) {
+      console.log('Checkmate detected!');
+      this.dialogService.showMessage(
+        `Check mate\u2003\u2014\u2003${this._chessBoard.turnColor === Color.White ? '0 - 1' : '1 - 0'}`, 
+        `Check mate! ${this._chessBoard.turnColor === Color.White ? 'Black' : 'White'} wins!`
+      );
+    } else if(this.isStaleMate()) {
+      console.log('Stalemate detected!');
+      this.dialogService.showMessage(
+        'Stale mate\u2003\u2014\u20031/2 - 1/2', 
+        'Stale mate! The game is a draw.'
+      );
+    }
+  }
 
   public get turnColor(): Color {
     return this._chessBoard.turnColor;
@@ -81,14 +105,15 @@ export class ChessBoardComponent {
         this.chessBoardView = this._chessBoard.chessBoardView; // Update the view
         this.selectedSquare = {piece: null, x: -1, y: -1}; // Deselect after moving
         this.pieceValidMoves = [];
-
+        
         // Check for pawn promotion
         if (movedPiece instanceof Pawn && (y === 0 || y === 7)) {
           this.showPromotionDialog = true;
           this.promotionCoords = { x, y };
           this.promotionColor = movedPiece.color;
         }
-
+        
+        this.checkGameState(); // Check for checkmate or stalemate
         return true;
       }
     }
@@ -123,6 +148,7 @@ export class ChessBoardComponent {
       this.showPromotionDialog = false;
       this.promotionCoords = null;
       this.promotionColor = null;
+      this.checkGameState(); // Check for checkmate or stalemate after promotion
     }
   }
 
@@ -144,6 +170,20 @@ export class ChessBoardComponent {
       this._chessBoard.lastMoveTo !== null
       && this._chessBoard.lastMoveTo.x === x
       && this._chessBoard.lastMoveTo.y === y
+    );
+  }
+
+  private isCheckMate(): boolean {
+    return (
+      this._chessBoard.kingChecked?.checked === true 
+      && this._chessBoard.findValidMoves(this._chessBoard.turnColor).size === 0
+    );
+  }
+
+  private isStaleMate(): boolean {
+    return (
+      this._chessBoard.kingChecked?.checked === false 
+      && this._chessBoard.findValidMoves(this._chessBoard.turnColor).size === 0
     );
   }
 }

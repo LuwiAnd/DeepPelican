@@ -1,0 +1,23 @@
+<div class="dialog-overlay" *ngIf="activeDialogs().length > 0">
+  <div class="dialog-container" *ngFor="let dialog of activeDialogs()">
+    <div class="dialog-header">
+      <h2>{{ dialog.title }}</h2>
+    </div>
+    <div class="dialog-body">
+      <p>{{ dialog.message }}</p>
+    </div>
+    <div class="dialog-footer">
+      <button 
+        *ngIf="dialog.cancelButtonText"
+        class="btn btn-cancel"
+        (click)="handleCancel(dialog)">
+        {{ dialog.cancelButtonText }}
+      </button>
+      <button 
+        class="btn btn-ok"
+        (click)="handleOk(dialog)">
+        {{ dialog.okButtonText || 'OK' }}
+      </button>
+    </div>
+  </div>
+</div>
