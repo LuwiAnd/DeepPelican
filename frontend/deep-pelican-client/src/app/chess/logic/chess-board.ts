@@ -538,7 +538,7 @@ export class ChessBoard {
         return this._chessBoard[coords.y][coords.x];
     }
 
-    public movePiece(from: Coords, to: Coords): void {
+    public async movePiece(from: Coords, to: Coords, promotionPiece?: Piece): Promise<void> {
         const piece = this.getPieceAt(from);
         if (!piece) {
             throw new Error('No piece at the source coordinates');
@@ -571,7 +571,7 @@ export class ChessBoard {
                     this._chessBoard[to.y][to.x] = piece;
                     this._chessBoard[from.y][from.x] = null;
                     
-                    this.updateAfterMove(piece, from, to);
+                    this.updateAfterMove(piece, from, to, promotionPiece);
                     return;
                 }else if(
                     Math.abs(to.y - from.y) === 1 
@@ -584,7 +584,7 @@ export class ChessBoard {
                     this._chessBoard[to.y][to.x] = piece;
                     this._chessBoard[from.y][from.x] = null;
 
-                    this.updateAfterMove(piece, from, to);
+                    this.updateAfterMove(piece, from, to, promotionPiece);
                     return;
                 }else if(
                     Math.abs(to.y - from.y) === 1 
@@ -597,7 +597,7 @@ export class ChessBoard {
                     this._chessBoard[to.y][to.x] = piece;
                     this._chessBoard[from.y][from.x] = null;
 
-                    this.updateAfterMove(piece, from, to);
+                    this.updateAfterMove(piece, from, to, promotionPiece);
                     return;
                 }else if( // En passant
                     Math.abs(to.y - from.y) === 1 
@@ -613,7 +613,7 @@ export class ChessBoard {
                     this._chessBoard[from.y][from.x] = null;
                     this._chessBoard[from.y][to.x] = null; // Remove the captured pawn
                     
-                    this.updateAfterMove(piece, from, to);
+                    this.updateAfterMove(piece, from, to, promotionPiece);
                     return;
                 }else{
                     piece.isDoubleJumped = false;
@@ -648,7 +648,7 @@ export class ChessBoard {
                 rook.unMoved = false;
                 piece.unMoved = false;
 
-                this.updateAfterMove(piece, from, to);
+                this.updateAfterMove(piece, from, to, promotionPiece);
                 return;
             // Long castling
             } else if(
@@ -674,7 +674,7 @@ export class ChessBoard {
                 rook.unMoved = false;
                 piece.unMoved = false;
                 
-                this.updateAfterMove(piece, from, to);
+                this.updateAfterMove(piece, from, to, promotionPiece);
                 return;
             } else if(
                 Math.abs(to.x - from.x) <= 1 
@@ -754,7 +754,7 @@ export class ChessBoard {
         }
     }
 
-    private updateAfterMove(piece: Piece, from: Coords, to: Coords): void {
+    private updateAfterMove(piece: Piece, from: Coords, to: Coords, promotionPiece?: Piece): void {
         for (let y = 0; y < 8; y++) {
             for (let x = 0; x < 8; x++) {
                 const currentPiece = this._chessBoard[y][x];
@@ -773,6 +773,15 @@ export class ChessBoard {
             }
         }
 
+        if (
+            piece instanceof Pawn 
+            && (to.y === 0 || to.y === 7)
+            && promotionPiece
+        )
+        {
+            this._chessBoard[to.y][to.x] = promotionPiece;
+        }
+        
         this._turnColor = this._turnColor === Color.White ? Color.Black : Color.White;
         this._validMoves = this.findValidMoves(this._turnColor);
         this.updateKingChecked(this._turnColor);

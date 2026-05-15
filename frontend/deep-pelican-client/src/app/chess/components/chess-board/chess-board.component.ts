@@ -70,7 +70,17 @@ export class ChessBoardComponent {
     return this._chessBoard.isInCheck(this._chessBoard.turnColor);
   }
 
-  public selectSquare(x: number, y: number): boolean {
+  public async selectSquare(x: number, y: number): Promise<boolean> {
+
+    if (this.promotionPromise) {
+      this.promotionPromise.resolve(null);
+      this.promotionPromise = null;
+      this.showPromotionDialog = false;
+      this.selectedSquare = {piece: null, x: -1, y: -1};
+      this.pieceValidMoves = [];
+      return false;
+    }
+
     const piece = this._chessBoard.getPieceAt({x, y});
     if(
       !piece && 
@@ -100,18 +110,28 @@ export class ChessBoardComponent {
       
       // If a different square is clicked and it's a valid move, move the piece
       if(this.pieceValidMoves.some(move => move.x === x && move.y === y)) {
-        const movedPiece = this._chessBoard.getPieceAt({x: this.selectedSquare.x, y: this.selectedSquare.y});
-        this._chessBoard.movePiece( {x: this.selectedSquare.x, y: this.selectedSquare.y}, {x, y});
+        const movedPiece = this._chessBoard.getPieceAt(
+          {
+            x: this.selectedSquare.x, 
+            y: this.selectedSquare.y
+          }
+        );
+
+        let promotionPiece: Piece | null = null;
+
+        if (movedPiece instanceof Pawn && (y === 0 || y === 7)) {
+          promotionPiece = await this.askForPromotionPiece(movedPiece.color);
+          if (!promotionPiece) {
+            return false;
+          }
+        }
+
+        await this._chessBoard.movePiece( {x: this.selectedSquare.x, y: this.selectedSquare.y}, {x, y}, promotionPiece || undefined);
         this.chessBoardView = this._chessBoard.chessBoardView; // Update the view
         this.selectedSquare = {piece: null, x: -1, y: -1}; // Deselect after moving
         this.pieceValidMoves = [];
         
-        // Check for pawn promotion
-        if (movedPiece instanceof Pawn && (y === 0 || y === 7)) {
-          this.showPromotionDialog = true;
-          this.promotionCoords = { x, y };
-          this.promotionColor = movedPiece.color;
-        }
+        
         
         this.checkGameState(); // Check for checkmate or stalemate
         return true;
@@ -140,15 +160,10 @@ export class ChessBoardComponent {
   }
 
   public onPieceSelected(piece: Piece): void {
-    if (this.promotionCoords) {
-      this._chessBoard.promotePawn(this.promotionCoords, piece);
-      // this.isCheckedSquare(this.promotionCoords.x, this.promotionCoords.y); // Check if the promotion move puts the king in check
-      // this._chessBoard.findValidMoves(this._chessBoard.turnColor); // Recalculate valid moves after promotion
-      this.chessBoardView = this._chessBoard.chessBoardView; // Update the view
+    if (this.promotionPromise) {
       this.showPromotionDialog = false;
-      this.promotionCoords = null;
-      this.promotionColor = null;
-      this.checkGameState(); // Check for checkmate or stalemate after promotion
+      this.promotionPromise.resolve(piece);
+      this.promotionPromise = null;
     }
   }
 
@@ -185,5 +200,18 @@ export class ChessBoardComponent {
       this._chessBoard.kingChecked?.checked === false 
       && this._chessBoard.findValidMoves(this._chessBoard.turnColor).size === 0
     );
+  }
+
+  private promotionPromise: {
+    resolve: (piece: Piece | null) => void;
+    reject: () => void;
+  } | null = null;
+
+  private askForPromotionPiece(color: Color): Promise<Piece | null> {
+    return new Promise((resolve) => {
+      this.showPromotionDialog = true;
+      this.promotionColor = color;
+      this.promotionPromise = { resolve, reject: () => resolve(null) };
+    });
   }
 }

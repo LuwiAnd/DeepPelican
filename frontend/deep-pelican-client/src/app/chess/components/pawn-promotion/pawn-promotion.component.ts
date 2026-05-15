@@ -28,4 +28,8 @@ export class PawnPromotionComponent {
     const key = (this.color === Color.White ? fenChar.toUpperCase() : fenChar) as keyof typeof pieceImagePaths;
     return this.pieceImagePaths[key];
   }
+
+  public cancelPromotion(): void {
+    this.pieceSelected.emit(undefined as unknown as Piece);
+  }
 }
