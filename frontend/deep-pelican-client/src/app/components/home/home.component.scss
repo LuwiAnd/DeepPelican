@@ -1,0 +1,66 @@
+.game-mode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.game-mode-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+    max-width: 900px;
+}
+
+.game-mode-button {
+    position: relative;
+
+    width: 100%;
+    height: 260px;
+
+    border: 4px solid transparent;
+    border-radius: 24px;
+
+    background-size: cover;
+    background-position: center;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s,
+        transform 0.2s;
+
+    overflow: hidden;
+}
+
+.game-mode-button:hover {
+    border-color: #4da3ff;
+    transform: scale(1.01);
+}
+
+.game-mode-button span {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 8px rgba(0,0,0,0.8),
+        0 0 16px rgba(0,0,0,0.8);
+}
+
+.human-vs-human {
+    background-image: url('/img/game-modes/local-game-mode.png');
+}
+
+.online-game {
+    background-image: url('/img/game-modes/online-game-mode.png');
+}
+
+.human-vs-ai {
+    background-image: url('/img/game-modes/engine-game-mode.png');
+}

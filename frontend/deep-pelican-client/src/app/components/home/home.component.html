@@ -1,0 +1,32 @@
+<div class="game-mode">
+    <h1>Welcome to Deep Pelican Chess!</h1>
+    <p>Choose a game mode to get started:</p>
+
+    <div class="game-mode-buttons">
+
+        <button 
+            class="game-mode-button human-vs-human"
+            (click)="startNewGame('human-vs-human')">
+
+            <span>Local Human Game</span>
+
+        </button>
+
+        <button 
+            class="game-mode-button online-game"
+            (click)="startNewGame('ai-vs-ai')">
+
+            <span>Online Human Game</span>
+
+        </button>
+
+        <button 
+            class="game-mode-button human-vs-ai"
+            (click)="startNewGame('human-vs-ai')">
+
+            <span>Human vs AI</span>
+
+        </button>
+
+    </div>
+</div>

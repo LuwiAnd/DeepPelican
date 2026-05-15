@@ -1,0 +1,30 @@
+.menu{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    background-color: #9e5cab;
+    padding: 1rem;
+    color: white;
+    font-size: large;
+    border-radius: 8px;
+    font-weight: bold;
+    align-items: center;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    list-style: none;
+}
+
+.menu a:hover {
+    background-color: #f1f18c;
+    color: #333;
+}
+
+.menu-item {
+    list-style: none;
+}

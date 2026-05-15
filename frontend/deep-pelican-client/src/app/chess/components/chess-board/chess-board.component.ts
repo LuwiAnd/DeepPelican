@@ -7,6 +7,7 @@ import { SelectedSquare } from '../../logic/models';
 import { PawnPromotionComponent } from '../pawn-promotion/pawn-promotion.component';
 import { Pawn } from '../../logic/pieces/pawn';
 import { DialogService } from '../../../shared/services/dialog.service';
+// import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-chess-board',
