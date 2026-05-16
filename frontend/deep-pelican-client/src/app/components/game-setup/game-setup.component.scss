@@ -1,0 +1,177 @@
+.game-setup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.game-setup h1 {
+  font-size: 2.5rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.setup-form {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #4da3ff;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.setup-form h2 {
+  font-size: 1.5rem;
+  color: #4da3ff;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.form-group select,
+.form-group input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #4da3ff;
+  border-radius: 6px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  transition: border-color 0.2s;
+}
+
+.form-group select:hover,
+.form-group input:hover {
+  border-color: #7fb3ff;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: #7fb3ff;
+  box-shadow: 0 0 8px rgba(77, 163, 255, 0.5);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.player-toggle-row {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.player-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+  min-width: 180px;
+}
+
+.player-toggle label {
+  color: #fff;
+  font-weight: 700;
+}
+
+.toggle-button {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: background 0.15s, transform 0.08s;
+}
+
+.toggle-button.active {
+  background: #2f8f4d;
+  border-color: #2f8f4d;
+  transform: translateY(-1px);
+}
+
+.player-toggle .toggle-button:first-of-type {
+  margin-right: 0.5rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: 2px solid;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 140px;
+}
+
+.btn-cancel {
+  border-color: #ff6b6b;
+  color: white;
+  background-color: rgba(255, 107, 107, 0.5);
+}
+
+.btn-cancel:hover {
+  background-color: rgba(255, 107, 107, 0.8);
+  transform: scale(1.05);
+}
+
+.btn-start {
+  border-color: #51cf66;
+  color: white;
+  background-color: rgba(81, 207, 102, 0.5);
+}
+
+.btn-start:hover {
+  background-color: rgba(81, 207, 102, 0.8);
+  transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+  .game-setup {
+    padding: 1rem;
+  }
+
+  .setup-form {
+    padding: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

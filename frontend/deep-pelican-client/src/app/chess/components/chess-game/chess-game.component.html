@@ -1,8 +1,7 @@
 <div class="game-page">
   <div class="game-toolbar">
     <p>Game mode: {{ gameMode }}</p>
-
   </div>
 
-  <app-chess-board></app-chess-board>
+  <app-chess-board [gameMode]="gameMode" [gameConfig]="gameConfig"></app-chess-board>
 </div>

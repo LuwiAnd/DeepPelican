@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { HomeComponent } from './components/home/home.component';
-// import { ChessBoardComponent } from './chess/components/chess-board/chess-board.component';
+import { GameSetupComponent } from './components/game-setup/game-setup.component';
 import { ChessGameComponent } from './chess/components/chess-game/chess-game.component';
 
 export const routes: Routes = [
@@ -15,7 +15,11 @@ export const routes: Routes = [
         component: HomeComponent
       },
       {
-        path: 'chess',
+        path: 'play/:gameMode',
+        component: GameSetupComponent
+      },
+      {
+        path: 'chess/:gameMode',
         component: ChessGameComponent
       }
     ]

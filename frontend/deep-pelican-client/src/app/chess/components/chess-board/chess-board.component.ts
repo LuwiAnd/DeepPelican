@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Piece } from '../../logic/pieces/piece';
 import { ChessBoard } from '../../logic/chess-board';
 import { CheckedKing, Color, Coords, FENChar, pieceImagePaths } from '../../logic/models';
@@ -7,6 +7,7 @@ import { SelectedSquare } from '../../logic/models';
 import { PawnPromotionComponent } from '../pawn-promotion/pawn-promotion.component';
 import { Pawn } from '../../logic/pieces/pawn';
 import { DialogService } from '../../../shared/services/dialog.service';
+import { GameConfig } from '../../../shared/models/game-config';
 // import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -16,6 +17,9 @@ import { DialogService } from '../../../shared/services/dialog.service';
   styleUrl: './chess-board.component.scss',
 })
 export class ChessBoardComponent {
+  @Input() gameMode: string | null = null;
+  @Input() gameConfig: GameConfig | null = null;
+
   public pieceImagePaths = pieceImagePaths;
   private _chessBoard: ChessBoard = new ChessBoard();
   public chessBoardView: (FENChar | null)[][] = this._chessBoard.chessBoardView;
